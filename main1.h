@@ -74,6 +74,8 @@ typedef struct
 	double end_time; //their planned minutes from 0 to end their shift
 } person;
 
+
+
 typedef struct 
 {
 	int current_floor;
@@ -87,6 +89,8 @@ typedef struct
 	int floor_to[NUM_FLOORS];  //1 if a button is pressed inside to stop at that floor or elevator is assigned to stop at that floor for a hall pickup
 	int person_type[ELEVATOR_CAPACITY]; //indicates whether each person on the elevator is a patient, doctor, or staff
 	int person_index[ELEVATOR_CAPACITY];  // indicates person index of that type 
+	double elevator_up_time;
+	double elevator_down_time;
 } elevator;
 
 typedef struct
@@ -170,3 +174,6 @@ int num_events_on_elevator;
 person next_in_Line;
 int people_queue_lobby; 
 int k ; 
+
+person next_in_elevator;
+int floor_this_person_is_going_to ;
