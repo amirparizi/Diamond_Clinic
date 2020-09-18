@@ -91,6 +91,8 @@ typedef struct
 	int person_index[ELEVATOR_CAPACITY];  // indicates person index of that type 
 	double elevator_up_time;
 	double elevator_down_time;
+	double time_to_reach;
+	int elevator_going_to; 
 } elevator;
 
 typedef struct
@@ -177,3 +179,5 @@ int k ;
 
 person next_in_elevator;
 int floor_this_person_is_going_to ;
+double time_to_reach;
+double travel_time;

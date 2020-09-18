@@ -72,11 +72,24 @@ int main()
 				}
 				
 				else
-				{
+				{	
 					Load_Event_Person(&hall_head[DOWN][people[next_event.entity_type][next_event.entity_index].to_floor],next_event.time, next_event.entity_type, next_event.entity_index);
-				}
+					for (i = 0; i < NUM_ELEVATORS; i++) 
+					{if (elevators[i].idle==1)
+						{travel_time = elevator_travel_time_per_floor * (people[next_event.entity_type][next_event.entity_index].to_floor-elevators[i].next_floor);
+						elevators[i].time_to_reach = elevators[i].elevator_tot_time + travel_time - next_event.time;}
+					}
+
+					for (int k=1;k<NUM_ELEVATORS;k++)
+					{wait_time = min(wait_time,elevators[k].time_to_reach);
+					}
+					for (int k=1;k<NUM_ELEVATORS;k++)
+					{ if (wait_time == elevators[k].time_to_reach)
+						{elevators[k].elevator_going_to = people[next_event.entity_type][next_event.entity_index].to_floor;}
+					}
 				
-			}
+				}
+		
 
 			#if 0
 			if (next_event.event_type == WAITING)
@@ -192,7 +205,11 @@ int main()
 			elevators[elevator_index].idle = 0;
 			elevators[elevator_index].num_people=0 ;// becuase now everyone is out of elevator
 			elevators[elevator_index].direction = DOWN;
-			floor_this_person_is_going_to = 0; // for now just move to lobby
+			if (elevators[elevator_index].elevator_going_to != 0) // check if the elevator needs to take somebody else from other floors (I assume that now idle floor for all elevators is LOBBY!)
+				{floor_this_person_is_going_to = elevators[elevator_index].elevator_going_to;
+				elevators[elevator_index].elevator_going_to = 0 ;} // make it zero after this for next time 
+			else 
+				{floor_this_person_is_going_to = 0;} // for now just move to lobby
 			elevators[elevator_index].floor_to[floor_this_person_is_going_to] = 1;
 			elevators[elevator_index].next_floor = floor_this_person_is_going_to;
 			Send_Elevator(elevator_index,next_event);
@@ -333,6 +350,7 @@ int main()
 	Print_Calendar();
 	fclose(output_file);
 }
+}
 
 /********************************************************************************************
 Open_and_Read_Files() opens all output and input files, and reads the latter into appropriate data structures 
@@ -460,6 +478,7 @@ void Initialize_Rep()
 		elevators[i].num_people = 0;
 		elevators[i].idle = 1; // idle can get binary values , 1 == True
 		elevators[i].current_floor = elevators[i].floor_idle[0]; //set the current floor of elevators as the idle floor assigned at time 0.
+		elevators[i].elevator_going_to = 0;
 		for (j = 0; j < NUM_FLOORS; j++)
 		{
 			elevators[i].floor_to[j] = 0;
