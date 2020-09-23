@@ -74,6 +74,7 @@ int main()
 				else
 				{	
 					Load_Event_Person(&hall_head[DOWN][people[next_event.entity_type][next_event.entity_index].to_floor],next_event.time, next_event.entity_type, next_event.entity_index);
+
 					for (i = 0; i < NUM_ELEVATORS; i++) 
 					{if (elevators[i].idle==1)
 						{travel_time = elevator_travel_time_per_floor * (people[next_event.entity_type][next_event.entity_index].to_floor-elevators[i].next_floor);
@@ -83,13 +84,17 @@ int main()
 					for (int k=1;k<NUM_ELEVATORS;k++)
 					{wait_time = min(wait_time,elevators[k].time_to_reach);
 					}
+		
+					if (elevators[k].elevator_going_to != 0)
+					{	next_in_Line = hall_head[DOWN][elevators[k].elevator_going_to]->Person;
+						Remove_Event_Person(&hall_head[DOWN][elevators[k].elevator_going_to]);
+						Load_Event(&event_head,next_event.time+ EPSILON, CLINIC_DEPARTURE , next_in_Line.person_type, next_in_Line.index);
+					}
 					for (int k=1;k<NUM_ELEVATORS;k++)
 					{ if (wait_time == elevators[k].time_to_reach)
 						{elevators[k].elevator_going_to = people[next_event.entity_type][next_event.entity_index].to_floor;}
 					}
-				
 				}
-		
 
 			#if 0
 			if (next_event.event_type == WAITING)
