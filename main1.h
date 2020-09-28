@@ -45,6 +45,7 @@
 #define SD_MINS_BEFORE_APPT 0  //0 to start with a determnistic model to make debugging easier
 #define FACILITY_END_TIME (HOURS_OPEN*60.0)
 #define NO_SHOW_PROB 0  //0 to start with deterministic model
+#define DOOR_TIME 10/60 // total door open close time in each action 
 
 //SIMULATION RUN parameters
 #define REPS 1  //1 for now for debugging...crank this up later
@@ -185,3 +186,7 @@ double time_to_reach;
 double travel_time;
 int num_in_line_from_clinic[NUM_FLOORS];
 int floor_this_person_is_going_to;
+int counter;
+int story;
+int last_indicator;
+double travel_time;
