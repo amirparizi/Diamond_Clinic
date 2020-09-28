@@ -64,6 +64,7 @@ typedef struct
 	double total_time_to_get_clinic ; 
 	int elevator_ind; // elevator index that a person move with
 	double time; // gonna define
+	double elevator_wait_time_down;
 
 	//these are only relevant if person_type is PATIENT
 	int num_visitors; //indicates how many other people (e.g., family) are with this patient.
@@ -82,7 +83,7 @@ typedef struct
 	int next_floor;
 	int num_people;
 	double elevator_time[2]; // 0: elevator going up , 1 : elevator going down , 2 : elevator in idle condition
-	double elevator_tot_time;
+	double elevator_clock;
 	int direction;
 	int idle;  //binary; 1 = true
 	int floor_idle[BUILDING_HOURS]; //indicates which floor this elevator should idel at by hour of day. 
@@ -93,6 +94,7 @@ typedef struct
 	double elevator_down_time;
 	double time_to_reach;
 	int elevator_going_to; 
+	int ultimate_number;
 } elevator;
 
 typedef struct
@@ -181,3 +183,5 @@ person next_in_elevator;
 int floor_this_person_is_going_to ;
 double time_to_reach;
 double travel_time;
+int num_in_line_from_clinic[NUM_FLOORS];
+int floor_this_person_is_going_to;
