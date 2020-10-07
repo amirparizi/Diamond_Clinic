@@ -118,7 +118,7 @@ int main()
 							elevators[k].elevator_going_to = people[next_event.entity_type][next_event.entity_index].to_floor; // we use ELEVATOR_GOING_TO to tell that elevator that there is a person in TO_FLOOR that you need to take care of.
                             if (elevators[k].idle==1) // if elevator is idle and in lower level we need to send it to the person right away.
 								{a++;
-                               elevators[k].next_floor = elevators[k].elevator_going_to +1; 
+                               elevators[k].next_floor = elevators[k].elevator_going_to; 
                                 elevators[k].elevator_clock = next_event.time;
                                 elevators[k].elevator_up_time += elevators[k].elevator_time[0];
                                 elevators[k].elevator_down_time += elevators[k].elevator_time[1];
@@ -153,7 +153,7 @@ int main()
 					elevators[elevator_index].elevator_time[0]=0; //reset elevator wait time when there is nobody in the waiting list . This will help us track time for each elevator each time it becomes idle and someone enter it
 					elevators[elevator_index].elevator_time[1]=0;
 					coun++;
-		
+					
 					if (event_head->next->Event.event_type !=1)
 						{for (w=0;w<NUM_ELEVATORS;w++)
 							{if ((elevators[w].num_people!=0)&&(elevators[w].next_floor==LOBBY))
@@ -271,7 +271,7 @@ int main()
 							if ((i == elevators[elevator_index].ultimate_number-1)&&(elevators[elevator_index].elevator_going_to>people[next_event.entity_type][next_event.entity_index].to_floor))  // add ELVEVATOR_ARRIVAL event into the list AP: add this one to revised time for this load event AND last person in the list from lobby wanna go the lower level than the person who requested before from CLINICAL_DEPARTURE
                                 {travel_time = elevator_travel_time_per_floor * (elevators[elevator_index].elevator_going_to-elevators[elevator_index].current_floor);
                                 elevators[elevator_index].elevator_time[0] += travel_time + elevators[elevator_index].counter * DOOR_TIME;
-                                elevators[elevator_index].next_floor = elevators[elevator_index].elevator_going_to+1; // here we say that beacuse the last person in the lobby wanna go to the level lower than ELEVATOR_GOING_TO we need to update this
+                                elevators[elevator_index].next_floor = elevators[elevator_index].elevator_going_to; // here we say that beacuse the last person in the lobby wanna go to the level lower than ELEVATOR_GOING_TO we need to update this
                                 elevators[elevator_index].elevator_going_to = 0;
                                 Load_Event(&event_head, elevators[elevator_index].elevator_clock+elevators[elevator_index].elevator_time[0], ELEVATOR_ARRIVAL , next_event.entity_type, next_event.entity_index);  // add ELVEVATOR_ARRIVAL event into the list
                                int story=20 ;
@@ -360,7 +360,7 @@ int main()
 							if ((i == elevators[elevator_index].ultimate_number-1)&&(elevators[elevator_index].elevator_going_to>people[next_event.entity_type][next_event.entity_index].to_floor))
                                 {travel_time = elevator_travel_time_per_floor * (elevators[elevator_index].elevator_going_to-elevators[elevator_index].current_floor);
                                 elevators[elevator_index].elevator_time[0] += travel_time + elevators[elevator_index].counter * DOOR_TIME;
-                                elevators[elevator_index].next_floor = elevators[elevator_index].elevator_going_to+1;
+                                elevators[elevator_index].next_floor = elevators[elevator_index].elevator_going_to;
                                 elevators[elevator_index].elevator_going_to = 0;
                                 Load_Event(&event_head,elevators[elevator_index].elevator_clock+ elevators[elevator_index].elevator_time[0], ELEVATOR_ARRIVAL , next_event.entity_type, next_event.entity_index); 
                                 int story=20 ;
@@ -381,7 +381,7 @@ int main()
 			else
 			{
 			
-			while ((num_in_line_from_clinic[elevators[elevator_index].next_floor]!=0) && (elevators[elevator_index].num_people<4)&&(elevators[elevator_index].next_floor != LOBBY)) // while elevator is going down and in this level find people in the queue and has capacity take the people from the queue
+			while ((num_in_line_from_clinic[elevators[elevator_index].next_floor]!=0) && (elevators[elevator_index].num_people<4)) // while elevator is going down and in this level find people in the queue and has capacity take the people from the queue
 					{next_in_Line = hall_head[DOWN][elevators[elevator_index].next_floor]->Person; // take the person from the wait list
                     if (story != elevators[elevator_index].next_floor)
                         {elevators[elevator_index].counter++;
@@ -399,13 +399,12 @@ int main()
 			 // use this indicator in counting DOOR_OPEN
 
 
-			if (elevators[elevator_index].next_floor != LOBBY ) // if this level is not LOBBY we need to load another event for next floor to check there for people in queue
-					{Load_Event(&event_head, next_event.time+elevator_travel_time_per_floor + DOOR_TIME*last_indicator , ELEVATOR_ARRIVAL , next_event.entity_type, next_event.entity_index);
-                    last_indicator = 0;
-					}
-			if ((elevators[elevator_index].num_people==4) && (num_in_line_from_clinic[elevators[elevator_index].next_floor]!=0) && (elevators[elevator_index].next_floor != LOBBY)) // if there IS people waiting in the queue in this level but elevator HAS NOT capacity to take those people 
+		// if this level is not LOBBY we need to load another event for next floor to check there for people in queue
+
+
+			if ((elevators[elevator_index].num_people==4) && (num_in_line_from_clinic[elevators[elevator_index].next_floor]!=0)) // if there IS people waiting in the queue in this level but elevator HAS NOT capacity to take those people 
 				{	number = num_in_line_from_clinic[elevators[elevator_index].next_floor];
-					for (p=0;p<number-5;p++) // for every person in that queue
+					for (p=0;p<number;p++) // for every person in that queue
 
 						{//printf("%d\t",number);
 						next_in_Line = hall_head[DOWN][elevators[elevator_index].next_floor]->Person;
@@ -417,7 +416,8 @@ int main()
 			
 			 // get the elevator index from the last person inside it 
 			elevators[elevator_index].next_floor=elevators[elevator_index].next_floor-1; // its start to moving down and check for people in each floor
-            elevators[elevator_index].elevator_time[1] += elevator_travel_time_per_floor; // here we imaginary stop in each level so elevator time in DOWN direction needs to update by one level distance
+            elevators[elevator_index].elevator_time[1] += elevator_travel_time_per_floor;
+			Load_Event(&event_head, next_event.time+elevator_travel_time_per_floor + DOOR_TIME*last_indicator , ELEVATOR_ARRIVAL , next_event.entity_type, next_event.entity_index); // here we imaginary stop in each level so elevator time in DOWN direction needs to update by one level distance
             last_indicator = 0;
 			}
 		}

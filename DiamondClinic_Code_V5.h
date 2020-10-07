@@ -2,7 +2,7 @@
 
 //INTEGER constants
 #define EPSILON 0.000001 // for event list
-#define NUM_FLOORS 9
+#define NUM_FLOORS 10
 #define NUM_CLINICS 56  //VCH clinics...still need to get non-VCH clinics using DC
 #define NUM_ELEVATORS 5 //
 #define MAX_STAFF_PER_CLINIC 5
