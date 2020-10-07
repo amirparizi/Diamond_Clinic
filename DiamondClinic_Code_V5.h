@@ -205,3 +205,5 @@ int o;
 int ind;
 int k;
 int w;
+int kj;
+int var;
