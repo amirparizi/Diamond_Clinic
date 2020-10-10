@@ -207,3 +207,7 @@ int k;
 int w;
 int kj;
 int var;
+int go;
+int goo;
+int number_for_ele;
+double prob_for_ele;
